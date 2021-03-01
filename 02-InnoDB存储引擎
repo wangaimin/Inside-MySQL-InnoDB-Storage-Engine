@@ -11,3 +11,9 @@
     - 自适应哈希索引
     - InnoDB存储的锁信息
     - 数据字典
+3. LRU List
+  1. 缓冲池是通过LRU List(Latest Recent Used,最近最少使用)进行管理
+  2. 最频繁访问的页在LRU列表前端，最少使用在末端，当缓冲池不够用时，释放末端数据。
+  3. 为了避免全表扫描时完全替换LRU列表，InnoDB的LRU列表中还加入了midpoint位置，所有新读取到的数据存放在LRU列表5/8位置。
+4. Flush List
+  1. 数据被修改后存放在Flush列表中，成为脏页，通过CHECKPOINT机制刷新回磁盘。
