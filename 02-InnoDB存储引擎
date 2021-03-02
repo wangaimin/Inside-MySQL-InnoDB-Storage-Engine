@@ -26,7 +26,7 @@
     3. 重做日志不可用时（达到设置上线），刷新缓冲页
   4. 两种Checkpoint
     - Sharp Checkpoint。在数据库关闭时将所有脏页刷新到磁盘
-    - FuzzyCheckpoint。
+    - Fuzzy Checkpoint。
       - Master Thead Checkpoint。每秒或每10秒从缓冲池的脏页列表中刷新一定比例数据到磁盘，该过程为异步
       - FLUSH_LRU_LIST Checkpoint。当LRU List中的数量达到上线，LRU List末端页被移除，若其中有脏页，需要进行Checkpoint。在InnoDB5.6版本开始，采用Page Cleaner线程异步进行
       - Async/Sync Flush Checkpoint。重做日志文件不可用的情况下执行，保证重做日志的循环使用。5.6版本后通过Page Clearner 线程中异步执行
