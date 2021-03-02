@@ -17,3 +17,18 @@
   3. 为了避免全表扫描时完全替换LRU列表，InnoDB的LRU列表中还加入了midpoint位置，所有新读取到的数据存放在LRU列表5/8位置。
 4. Flush List
   1. 数据被修改后存放在Flush列表中，成为脏页，通过CHECKPOINT机制刷新回磁盘。
+5. Checkpoint技术
+  1. 当前事务数据库都采用体积事务时，先写重做日志（redo log_buffer），再修改页。
+  2. ACID中的D（Durability持久性）就是靠此实现。
+  3. Checkpoint解决的问题
+    1. 缩短数据库恢复时间（减少redo log中未刷新到磁盘的量）
+    2. 缓冲池不够用时，刷新脏页到磁盘
+    3. 重做日志不可用时（达到设置上线），刷新缓冲页
+  4. 两种Checkpoint
+    - Sharp Checkpoint。在数据库关闭时将所有脏页刷新到磁盘
+    - FuzzyCheckpoint。
+      - Master Thead Checkpoint。每秒或每10秒从缓冲池的脏页列表中刷新一定比例数据到磁盘，该过程为异步
+      - FLUSH_LRU_LIST Checkpoint。当LRU List中的数量达到上线，LRU List末端页被移除，若其中有脏页，需要进行Checkpoint。在InnoDB5.6版本开始，采用Page Cleaner线程异步进行
+      - Async/Sync Flush Checkpoint。重做日志文件不可用的情况下执行，保证重做日志的循环使用。5.6版本后通过Page Clearner 线程中异步执行
+      - Dirty Page too much Checkpoint 。脏页数据太多执行Checkpoint,默认达到最大值的75%会执行
+    
