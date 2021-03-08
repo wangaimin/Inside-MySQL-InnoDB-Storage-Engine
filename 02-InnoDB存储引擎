@@ -49,4 +49,8 @@
       2. 使用Insert Buffer的条件
         1. 索引是辅助索引
         2. 索引不是唯一的
-    2. Change Buffer
+    2. Merge Insert Buffer
+      1. Insert Buffer合并情况
+        1. 辅助索引页被读取到缓冲池中。
+        2. Insert Buffer Bitmap 页追踪到该辅助索引页已无可用空间
+        3. Master Thread
